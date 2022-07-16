@@ -1,4 +1,4 @@
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(not(any(test, feature = "mio-serial")), no_std)]
 
 // 9600 baud
 // data bits 1
@@ -9,6 +9,9 @@ mod error;
 
 pub use error::Error;
 pub type Result<T> = core::result::Result<T, Error>;
+
+#[cfg(feature = "mio-serial")]
+pub mod mio;
 
 pub const START: u8 = 0x7e;
 pub const STOP: u8 = 0xef;
@@ -102,7 +105,7 @@ impl Control {
         buf[6] = param as u8;
 
         // checksum is twos complement of the sum of the data bytes
-        let checksum: i16 = buf[2..7].iter().cloned().map(i16::from).sum();
+        let checksum: i16 = buf[1..7].iter().cloned().map(i16::from).sum();
         let checksum = -checksum;
 
         buf[7] = (checksum >> 8) as u8;

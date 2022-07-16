@@ -1,11 +1,13 @@
 [package]
-name = "dfr0299-rs"
+name = "dfr0299"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+mio-serial = ["dep:mio-serial"]
 
 [dependencies]
+mio-serial = { version = "5", optional = true }
 
 [dev-dependencies]
 pretty_assertions = "1"
