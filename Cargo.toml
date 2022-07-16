@@ -1,13 +1,3 @@
-[package]
-name = "dfr0299"
-version = "0.1.0"
-edition = "2021"
-
-[features]
-mio-serial = ["dep:mio-serial"]
-
-[dependencies]
-mio-serial = { version = "5", optional = true }
-
-[dev-dependencies]
-pretty_assertions = "1"
+[workspace]
+members = ["dfr0299", "examples/*"]
+default-members = ["dfr0299"]

@@ -1,7 +1,16 @@
-use dfr0299::{mio::Serial, Control::*, PlaybackSource};
+use dfr0299::{Control::*, PlaybackSource};
+use std::io::Write;
 
-fn main() {
-    let mut port = Serial::new("/dev/ttyUSB0").unwrap();
+const USAGE: &str = "Usage: ./with-mio-serial PORT\n\
+    e.g. ./with-mio-serial /dev/ttyUSB0";
+
+fn main() -> color_eyre::Result<()> {
+    color_eyre::install()?;
+
+    let port = std::env::args().nth(1).expect(USAGE);
+
+    let mut port = mio_serial::new(port, 9600).open()?;
+    let mut buf = [0; 10];
     for msg in [
         SetPlaybackSource(PlaybackSource::Tf),
         Track(1),
@@ -11,7 +20,8 @@ fn main() {
     ] {
         std::thread::sleep(std::time::Duration::from_millis(500));
         println!("Send message: {msg:?}");
-        port.send_control(msg).unwrap();
+        msg.serialise(&mut buf)?;
+        port.write_all(&buf)?;
     }
 
     // println!("buf from datasheet");
@@ -28,4 +38,6 @@ fn main() {
     //     0xef, // STOP
     // ])
     // .unwrap();
+
+    Ok(())
 }

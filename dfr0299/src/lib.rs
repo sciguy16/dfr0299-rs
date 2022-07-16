@@ -1,4 +1,4 @@
-#![cfg_attr(not(any(test, feature = "mio-serial")), no_std)]
+#![cfg_attr(not(any(test, feature = "use_std")), no_std)]
 
 // 9600 baud
 // data bits 1
@@ -9,9 +9,6 @@ mod error;
 
 pub use error::Error;
 pub type Result<T> = core::result::Result<T, Error>;
-
-#[cfg(feature = "mio-serial")]
-pub mod mio;
 
 pub const START: u8 = 0x7e;
 pub const STOP: u8 = 0xef;
@@ -170,8 +167,8 @@ mod test {
             0x00, // request ack
             0x00, // param high
             0x01, // param low
-            0xff, // checksum high
-            0xe6, // checksum low
+            0xfe, // checksum high (datasheet says 0xff but is wrong)
+            0xf7, // checksum low (datasheet says 0xe6)
             0xef, // STOP
         ];
         eprintln!("< calculated / expected >");
@@ -192,8 +189,8 @@ mod test {
             0x00, // request ack
             0x00, // param high
             0x04, // param low
-            0xff, // checksum high
-            0xdd, // checksum low
+            0xfe, // checksum high (datasheet says 0xff)
+            0xee, // checksum low (datasheet says 0xdd)
             0xef, // STOP
         ];
         eprintln!("< calculated / expected >");
