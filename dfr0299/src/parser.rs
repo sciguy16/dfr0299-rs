@@ -22,7 +22,7 @@ impl Default for ParserState {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ParseResult {
     Incomplete,
     Complete(Response),
@@ -89,7 +89,7 @@ impl Parser {
                 ChecksumH
             }
             ChecksumH => {
-                self.checksum_h = byte;
+                self.checksum_l = byte;
                 ChecksumL
             }
             ChecksumL => {
@@ -147,5 +147,23 @@ mod test {
 
         let checksum = parser.calculate_checksum();
         assert_eq!(checksum.to_be_bytes(), [0xfe, 0xf7]);
+    }
+
+    #[test]
+    fn parse_udisk_remove() {
+        let msg = [0x7e, 0xff, 0x06, 0x3b, 0x00, 0x00, 0x01, 0xfe, 0xbf, 0xef];
+        let mut parser = Parser::new();
+        let expected = Response::DiskRemoved(crate::response::Disk::UDisk);
+        let mut ok = false;
+        for byte in msg {
+            match parser.process_byte(byte).unwrap() {
+                ParseResult::Incomplete => {}
+                ParseResult::Complete(msg) => {
+                    assert_eq!(msg, expected);
+                    ok = true;
+                }
+            }
+        }
+        assert!(ok);
     }
 }
