@@ -16,7 +16,7 @@ pub enum Control {
     Reset,
     Playback,
     Pause,
-    SetFolder(u16),
+    SetFolder(u8, u8),
     SetVolumeAdjust(u16),
     RepeatPlay(u16),
 }
@@ -113,7 +113,7 @@ impl Control {
             Control::Reset => 0x0c,
             Control::Playback => 0x0d,
             Control::Pause => 0x0e,
-            Control::SetFolder(_) => 0x0f,
+            Control::SetFolder(..) => 0x0f,
             Control::SetVolumeAdjust(_) => 0x10,
             Control::RepeatPlay(_) => 0x11,
         }
@@ -126,7 +126,9 @@ impl Control {
             Control::SetEq(e) => *e as u16,
             Control::SetPlaybackMode(m) => *m as u16,
             Control::SetPlaybackSource(s) => *s as u16,
-            Control::SetFolder(f) => *f as u16,
+            Control::SetFolder(folder, file) => {
+                u16::from_be_bytes([*folder, *file])
+            }
             Control::SetVolumeAdjust(v) => *v as u16,
             Control::RepeatPlay(r) => *r as u16,
             _ => 0,

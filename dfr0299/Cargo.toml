@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-use_std = []
+std = ["num_enum/std"]
 
 [dependencies]
+num_enum = { version = "0.5", default_features = false }
 
 
 [dev-dependencies]
