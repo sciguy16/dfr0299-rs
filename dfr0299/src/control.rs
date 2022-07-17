@@ -5,7 +5,7 @@
 use crate::{Error, Result, START, STOP, VERSION};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum Control {
+pub enum Command {
     Next,
     Previous,
     Track(u16),
@@ -16,7 +16,7 @@ pub enum Control {
     SetPlaybackMode(PlaybackMode),
     SetPlaybackSource(PlaybackSource),
     Standby,
-    Normal,
+    Wake,
     Reset,
     Playback,
     Pause,
@@ -62,7 +62,7 @@ pub enum RequestAck {
     Yes = 0x01,
 }
 
-impl Control {
+impl Command {
     pub fn serialise(&self, buf: &mut [u8]) -> Result<usize> {
         self.serialise_with_ack(buf, RequestAck::No)
     }
@@ -110,39 +110,39 @@ impl Control {
     }
 
     pub fn command_byte(&self) -> u8 {
+        use Command::*;
         match self {
-            Control::Next => 0x01,
-            Control::Previous => 0x02,
-            Control::Track(_) => 0x03,
-            Control::IncreaseVolume => 0x04,
-            Control::DecreaseVolume => 0x05,
-            Control::SetVolume(_) => 0x06,
-            Control::SetEq(_) => 0x07,
-            Control::SetPlaybackMode(_) => 0x08,
-            Control::SetPlaybackSource(_) => 0x09,
-            Control::Standby => 0x0a,
-            Control::Normal => 0x0b,
-            Control::Reset => 0x0c,
-            Control::Playback => 0x0d,
-            Control::Pause => 0x0e,
-            Control::SetFolder(..) => 0x0f,
-            Control::SetVolumeAdjust(_) => 0x10,
-            Control::RepeatPlay(_) => 0x11,
+            Next => 0x01,
+            Previous => 0x02,
+            Track(_) => 0x03,
+            IncreaseVolume => 0x04,
+            DecreaseVolume => 0x05,
+            SetVolume(_) => 0x06,
+            SetEq(_) => 0x07,
+            SetPlaybackMode(_) => 0x08,
+            SetPlaybackSource(_) => 0x09,
+            Standby => 0x0a,
+            Wake => 0x0b,
+            Reset => 0x0c,
+            Playback => 0x0d,
+            Pause => 0x0e,
+            SetFolder(..) => 0x0f,
+            SetVolumeAdjust(_) => 0x10,
+            RepeatPlay(_) => 0x11,
         }
     }
 
     pub fn param(&self) -> u16 {
+        use Command::*;
         match self {
-            Control::Track(t) => *t,
-            Control::SetVolume(v) => *v,
-            Control::SetEq(e) => *e as u16,
-            Control::SetPlaybackMode(m) => *m as u16,
-            Control::SetPlaybackSource(s) => *s as u16,
-            Control::SetFolder(folder, file) => {
-                u16::from_be_bytes([*folder, *file])
-            }
-            Control::SetVolumeAdjust(v) => *v as u16,
-            Control::RepeatPlay(r) => *r as u16,
+            Track(t) => *t,
+            SetVolume(v) => *v,
+            SetEq(e) => *e as u16,
+            SetPlaybackMode(m) => *m as u16,
+            SetPlaybackSource(s) => *s as u16,
+            SetFolder(folder, file) => u16::from_be_bytes([*folder, *file]),
+            SetVolumeAdjust(v) => *v as u16,
+            RepeatPlay(r) => *r as u16,
             _ => 0,
         }
     }
@@ -156,7 +156,7 @@ mod test {
     #[test]
     fn serialise_command_track() {
         let mut buf = [0; 16];
-        let cmd = Control::Track(1);
+        let cmd = Command::Track(1);
         let len = cmd.serialise(&mut buf).unwrap();
         assert_eq!(len, 10);
         let expected: &[u8] = &[
@@ -178,7 +178,7 @@ mod test {
     #[test]
     fn serialise_command_norflash() {
         let mut buf = [0; 16];
-        let cmd = Control::SetPlaybackSource(PlaybackSource::Flash);
+        let cmd = Command::SetPlaybackSource(PlaybackSource::Flash);
         let len = cmd.serialise(&mut buf).unwrap();
         assert_eq!(len, 10);
         let expected: &[u8] = &[

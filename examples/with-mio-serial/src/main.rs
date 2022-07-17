@@ -4,21 +4,16 @@
 
 use color_eyre::Result;
 use dfr0299::{
-    Control::{self, *},
-    Disk, ParseResult, Parser, PlaybackSource, RequestAck,
+    Command::{self, *},
+    Disk, ParseResult, Parser, RequestAck,
     Response::{self, *},
 };
 use mio_serial::SerialPort;
 use std::io::Write;
 use std::sync::mpsc;
-use std::time::Duration;
 
 const USAGE: &str = "Usage: ./with-mio-serial PORT\n\
     e.g. ./with-mio-serial /dev/ttyUSB0";
-
-fn sleep_ms(ms: u64) {
-    std::thread::sleep(Duration::from_millis(ms));
-}
 
 fn main() -> Result<()> {
     color_eyre::install()?;
@@ -31,18 +26,6 @@ fn main() -> Result<()> {
     let read_half = port.try_clone()?;
     // start read thread
     std::thread::spawn(move || read_loop(read_half, tx).unwrap());
-
-    // for msg in [
-    //     Reset,
-    //     SetPlaybackSource(PlaybackSource::Tf),
-    //     Track(1),
-    //     SetVolume(20),
-    //     Playback,
-    //     //Normal,
-    // ] {
-    //     std::thread::sleep(std::time::Duration::from_millis(2000));
-    //     send(&mut port, msg)?;
-    // }
 
     send(&mut port, Reset)?;
     wait_for_ack(&mut rx)?;
@@ -57,20 +40,6 @@ fn main() -> Result<()> {
 
     send(&mut port, Track(1))?;
 
-    // println!("buf from datasheet");
-    // port.send_buf(&[
-    //     0x7e, // START
-    //     0xff, // VERSION
-    //     0x06, // LEN
-    //     0x03, // command
-    //     0x00, // request ack
-    //     0x00, // param high
-    //     0x01, // param low
-    //     0xff, // checksum high
-    //     0xe6, // checksum low
-    //     0xef, // STOP
-    // ])
-    // .unwrap();
     loop {
         let resp = rx.recv()?;
         match resp {
@@ -82,7 +51,7 @@ fn main() -> Result<()> {
     }
 }
 
-fn send(port: &mut Box<dyn SerialPort>, msg: Control) -> Result<()> {
+fn send(port: &mut Box<dyn SerialPort>, msg: Command) -> Result<()> {
     let mut buf = [0; 10];
     println!("Send message: {msg:?}");
     msg.serialise_with_ack(&mut buf, RequestAck::Yes)?;
