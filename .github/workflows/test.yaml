@@ -30,7 +30,7 @@ jobs:
 
       - name: Run cargo clippy
         run: |
-          cargo clippy --all -- -D warnings
+          cargo clippy -- -D warnings
 
       - name: Build examples
         run: |
