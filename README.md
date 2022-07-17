@@ -16,7 +16,7 @@ Communication with the module is via UART at 9600-8-N-1.
 Two example are provided: one using `mio_serial` and one for the RP2040
 
 ```bash
-cargo run --package serial_port
+cargo run --package with-mio-serial
 cargo run --release --package pico --target thumbv6m-none-eabi
 ```
 

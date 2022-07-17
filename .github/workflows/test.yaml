@@ -34,5 +34,5 @@ jobs:
 
       - name: Build examples
         run: |
-          cargo build --package serial_port
+          cargo build --package with-mio-serial
           cargo build --release --package pico --target thumbv6m-none-eabi
