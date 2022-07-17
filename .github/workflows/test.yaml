@@ -1,0 +1,38 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          target: thumbv7m-none-eabi
+          components: rustfmt, clippy
+
+      - name: Load cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Test crate
+        run: |
+          cargo test
+
+      - name: Run cargo fmt
+        run: |
+          cargo fmt --all -- --check
+
+      - name: Run cargo clippy
+        run: |
+          cargo clippy --all -- -D warnings
+
+      - name: Build examples
+        run: |
+          cargo build --package serial_port
+          cargo build --release --package pico --target thumbv6m-none-eabi
