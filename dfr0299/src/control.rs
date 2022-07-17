@@ -6,6 +6,7 @@ use crate::{Error, Result, START, STOP, VERSION};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum Command {
+    // "Control" messages
     Next,
     Previous,
     Track(u16),
@@ -23,6 +24,26 @@ pub enum Command {
     SetFolder(u8, u8),
     SetVolumeAdjust(u16),
     RepeatPlay(u16),
+
+    // "Command" messages
+    Stay1,
+    Stay2,
+    Stay3,
+    InitialisationParameters(u16),
+    RequestRetransmission,
+    Reply,
+    GetStatus,
+    GetVolume,
+    GetEq,
+    GetPlaybackMode,
+    GetSoftwareVersion,
+    GetTfFileCount,
+    GetUDiskFileCount,
+    GetFlashFileCount,
+    KeepOn,
+    GetTfCurrentTrack,
+    GetUDiskCurrentTrack,
+    GetFlashCurrentTrack,
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -112,6 +133,7 @@ impl Command {
     pub fn command_byte(&self) -> u8 {
         use Command::*;
         match self {
+            // "Control" messages
             Next => 0x01,
             Previous => 0x02,
             Track(_) => 0x03,
@@ -129,6 +151,26 @@ impl Command {
             SetFolder(..) => 0x0f,
             SetVolumeAdjust(_) => 0x10,
             RepeatPlay(_) => 0x11,
+
+            // "Command messages"
+            Stay1 => 0x3c,
+            Stay2 => 0x3d,
+            Stay3 => 0x3e,
+            InitialisationParameters(_) => 0x3f,
+            RequestRetransmission => 0x40,
+            Reply => 0x41,
+            GetStatus => 0x41,
+            GetVolume => 0x43,
+            GetEq => 0x44,
+            GetPlaybackMode => 0x45,
+            GetSoftwareVersion => 0x46,
+            GetTfFileCount => 0x47,
+            GetUDiskFileCount => 0x48,
+            GetFlashFileCount => 0x49,
+            KeepOn => 0x4a,
+            GetTfCurrentTrack => 0x4b,
+            GetUDiskCurrentTrack => 0x4c,
+            GetFlashCurrentTrack => 0x4d,
         }
     }
 
