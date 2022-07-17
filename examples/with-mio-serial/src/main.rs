@@ -39,6 +39,10 @@ fn main() -> Result<()> {
     }
 
     send(&mut port, Track(1))?;
+    wait_for_ack(&mut rx)?;
+
+    send(&mut port, SetVolume(30))?;
+    wait_for_ack(&mut rx)?;
 
     loop {
         let resp = rx.recv()?;

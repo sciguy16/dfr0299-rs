@@ -1,7 +1,8 @@
 https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299
 
-```
-cargo r --features=mio-serial --example serial_port
+```bash
+cargo run --package serial_port
+cargo run --release --package pico --target thumbv6m-none-eabi
 ```
 
 Note that the example serialised messages in the datasheet are have

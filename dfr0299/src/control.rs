@@ -5,6 +5,7 @@
 use crate::{Error, Result, START, STOP, VERSION};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "use_defmt", derive(defmt::Format))]
 pub enum Command {
     // "Control" messages
     Next,
@@ -47,6 +48,7 @@ pub enum Command {
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "use_defmt", derive(defmt::Format))]
 #[repr(u16)]
 pub enum EqMode {
     Normal = 0x00,
@@ -58,6 +60,7 @@ pub enum EqMode {
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "use_defmt", derive(defmt::Format))]
 #[repr(u16)]
 pub enum PlaybackMode {
     Repeat = 0x00,
@@ -67,6 +70,7 @@ pub enum PlaybackMode {
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "use_defmt", derive(defmt::Format))]
 #[repr(u16)]
 pub enum PlaybackSource {
     UDisk = 0x00,
@@ -77,6 +81,7 @@ pub enum PlaybackSource {
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "use_defmt", derive(defmt::Format))]
 #[repr(u8)]
 pub enum RequestAck {
     No = 0x00,

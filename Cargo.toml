@@ -1,3 +1,6 @@
 [workspace]
 members = ["dfr0299", "examples/*"]
 default-members = ["dfr0299"]
+
+[profile.release]
+debug = 2

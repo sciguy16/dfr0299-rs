@@ -6,10 +6,13 @@ license = "MPL-2.0"
 
 [features]
 std = ["num_enum/std"]
+use_defmt = ["dep:defmt"]
 
 [dependencies]
 num_enum = { version = "0.5", default_features = false }
 
+# feature = use_defmt
+defmt = { version = "0.3", optional = true }
 
 [dev-dependencies]
 pretty_assertions = "1"
