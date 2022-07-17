@@ -5,7 +5,8 @@
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![deny(missing_docs)]
 
-//! Serial protocol for the DFR0299 MP3 player module
+//! Serial protocol for the
+//! [DFR0299 MP3 player module](https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299)
 //!
 //! This crate provides zero-allocation, `no_std`-compatible
 //! serialisation and deserialisation for the commands supported by the
