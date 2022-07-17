@@ -26,12 +26,41 @@ impl Default for ParserState {
     }
 }
 
+/// After processing a byte the parser will return either `Incomplete`
+/// to indicate that it requires more data or `Complete` to indicate
+/// that a full message has been successfully processed
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ParseResult {
+    /// Waiting for more bytes
     Incomplete,
+    /// Complete message has been processed
     Complete(Response),
 }
 
+/// Parser for the DFR0299 response messages. After initialising, calls
+/// to `Parser::process_byte` will advance the internal state machine
+/// and return any complete messages.
+///
+/// ## Example
+/// ```no_run
+/// use dfr0299::{Parser, ParseResult};
+/// fn process<R: std::io::Read>(mut uart: R) -> Result<(), Box<dyn std::error::Error>> {
+///    let mut parser = Parser::new();
+///    let mut buf = [0u8; 1];
+///    loop {
+///        uart.read_exact(&mut buf)?;
+///        match parser.process_byte(buf[0]) {
+///            Ok(ParseResult::Incomplete) => {}
+///            Ok(ParseResult::Complete(msg)) => {
+///                println!("Message received: {msg:?}");
+///            }
+///            Err(e) => {
+///                println!("Parse error: {e}");
+///            }
+///        }
+///    }
+/// }
+/// ```
 #[derive(Debug, Default)]
 pub struct Parser {
     state: ParserState,
@@ -44,10 +73,15 @@ pub struct Parser {
 }
 
 impl Parser {
+    /// Initialise a new `Parser`
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Process a single byte and advance the internal state machine
+    /// accordingly. Returns a `ParseResult` indicating the parsing
+    /// status or an `Error::BadChecksum` if a complete message has been
+    /// received but the checksum is incorrect.
     pub fn process_byte(&mut self, byte: u8) -> Result<ParseResult> {
         use ParserState::*;
         self.state = match self.state {

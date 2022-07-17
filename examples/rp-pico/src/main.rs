@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+
 #![cfg_attr(not(test), no_std)]
 #![no_main]
 
@@ -80,7 +84,7 @@ fn main() -> ! {
 
     info!("Send TRACK 1");
     Command::Track(1).serialise(&mut buf).unwrap();
-    uart.write_full_blocking(&mut buf);
+    uart.write_full_blocking(&buf);
 
     loop {
         led.set_high().unwrap();

@@ -4,11 +4,20 @@
 
 use core::fmt::{self, Display, Formatter};
 
+/// Error states for dfr0299. Includes errors for both serialisation
+/// parsing
 #[derive(Copy, Clone, Debug)]
+#[cfg_attr(feature = "use_defmt", derive(defmt::Format))]
+#[non_exhaustive]
 pub enum Error {
+    /// Serialisation buffer should be at least 10 bytes long
     BufferTooShort,
+    /// A complete packet was received but its checksum was invalid
     BadChecksum,
+    /// Command not recognised, and the raw value is returned
     InvalidCommand(u8),
+    /// An attempt to parse a parameter value into one of the parameter
+    /// enums failed
     InvalidParameterValue,
 }
 
