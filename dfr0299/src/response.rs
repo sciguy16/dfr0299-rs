@@ -1,8 +1,16 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+
 use crate::{Error, Result};
 use num_enum::TryFromPrimitive;
 
+// https://github.com/DFRobot/DFRobotDFPlayerMini/blob/master/DFRobotDFPlayerMini.cpp#L152
+// "//handle the 0x41 ack feedback as a spcecial case, in case the
+// pollusion of _handleCommand, _handleParameter, and _handleType."
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum Response {
+    Ack,
     DiskOnline(Disk),
     UDiskFinishPlayback(u16),
     TfFinishPlayback(u16),
@@ -44,7 +52,8 @@ impl Response {
             0x3d => TfFinishPlayback(param),
             0x3e => FlashFinishPlayback(param),
             0x3f => DiskOnline(Disk::try_from(param_l)?),
-            _ => return Err(Error::InvalidCommand),
+            0x41 => Ack,
+            cmd => return Err(Error::InvalidCommand(cmd)),
         })
     }
 }

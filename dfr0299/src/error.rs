@@ -1,10 +1,14 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+
 use core::fmt::{self, Display, Formatter};
 
 #[derive(Copy, Clone, Debug)]
 pub enum Error {
     BufferTooShort,
     BadChecksum,
-    InvalidCommand,
+    InvalidCommand(u8),
     InvalidParameterValue,
 }
 

@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+
 use crate::{Error, Result, START, STOP, VERSION};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -59,6 +63,10 @@ pub enum RequestAck {
 }
 
 impl Control {
+    pub fn serialise(&self, buf: &mut [u8]) -> Result<usize> {
+        self.serialise_with_ack(buf, RequestAck::No)
+    }
+
     /// serialisation format is:
     /// * START = 0x7e
     /// * VERSION = 0xff
@@ -70,7 +78,11 @@ impl Control {
     /// * CHECKSUM_H = checksum high byte
     /// * CHECKSUM_L = checksum low byte
     /// * STOP = 0xef
-    pub fn serialise(&self, buf: &mut [u8]) -> Result<usize> {
+    pub fn serialise_with_ack(
+        &self,
+        buf: &mut [u8],
+        request_ack: RequestAck,
+    ) -> Result<usize> {
         const LEN: usize = 10;
 
         if buf.len() < LEN {
@@ -83,7 +95,7 @@ impl Control {
         buf[1] = VERSION;
         buf[2] = 0x06; // LEN
         buf[3] = self.command_byte();
-        buf[4] = RequestAck::No as u8;
+        buf[4] = request_ack as u8;
         buf[5] = (param >> 8) as u8;
         buf[6] = param as u8;
 
