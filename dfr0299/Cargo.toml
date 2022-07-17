@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 license = "MPL-2.0"
 repository = "https://github.com/sciguy16/dfr0299-rs"
+categories = ["embedded", "encoding", "no-std", "parsing"]
 
 [features]
 std = ["num_enum/std"]

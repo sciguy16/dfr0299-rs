@@ -1,7 +1,7 @@
 # dfr0299
 
-[![Crates.io](https://img.shields.io/crates/v/dcc-rs)](https://crates.io/crates/dcc-rs)
-[![docs.rs](https://img.shields.io/docsrs/dcc-rs)](https://docs.rs/dcc-rs)
+[![Crates.io](https://img.shields.io/crates/v/dfr0299)](https://crates.io/crates/dfr0299)
+[![docs.rs](https://img.shields.io/docsrs/dfr0299)](https://docs.rs/dfr0299)
 
 Rust implementation of the serial protocol for the
 [DFR0299 MP3 player module](https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299)
